@@ -1,0 +1,70 @@
+// BFS-Algorithm for 2D Cartesian System
+function bfs2D(startX, startY, targetX, targetY) {
+	// Check if the coordinate given is walkable
+	function isValidCoordinate(x, y) { 
+		const test = dw.getTerrainAt({l:dw.c.l,x: x,y: y})
+		if( test == 0){ // 1 should be a wall
+			return true
+		}
+	}
+		
+	// Define a queue to store the coordinates to be visited
+	const queue = [];
+	queue.push({ x: startX, y: startY });
+  
+	// Define a map to track the predecessors of each visited coordinate
+	const predecessor = new Map();
+	predecessor.set(`${startX},${startY}`, null);
+  
+	// Define a set to track the visited coordinates
+	const visited = new Set();
+	visited.add(`${startX},${startY}`);
+  
+	// Define the possible movements in the Cartesian system
+	const directions = [
+	  { dx: -1, dy: 0 }, // Left
+	  { dx: 1, dy: 0 },  // Right
+	  { dx: 0, dy: -1 }, // Up
+	  { dx: 0, dy: 1 },   // Down
+	  { dx: -1, dy: -1 }, // Up Left
+	  { dx: -1, dy: 1 }, // Down Left
+	  { dx: 1, dy: -1 }, // Up Right
+	  { dx: 1, dy: 1 }, // Down Right
+	];
+  
+	while (queue.length > 0) {
+	  const current = queue.shift();
+	  const { x, y } = current;
+  
+	  // Check if the target coordinate is reached
+	  if (x === targetX && y === targetY) {
+		// Reconstruct the path by backtracking from the target coordinate to the start coordinate
+		const path = [];
+		let curr = `${targetX},${targetY}`;
+		while (curr) {
+		  path.unshift(curr);
+		  curr = predecessor.get(curr);
+		}
+		return path.map(coord => {
+		  const [coordX, coordY] = coord.split(",").map(Number);
+		  return { x: coordX, y: coordY };
+		});
+	  }
+  
+	  // Explore the neighbors of the current coordinate
+	  for (const direction of directions) {
+		const newX = x + direction.dx;
+		const newY = y + direction.dy;
+		const newCoord = `${newX},${newY}`;
+  
+		if (isValidCoordinate(newX, newY) && !visited.has(newCoord)) {
+		  queue.push({ x: newX, y: newY });
+		  predecessor.set(newCoord, `${x},${y}`);
+		  visited.add(newCoord);
+		}
+	  }
+	}
+  
+	// No path found
+	return [];
+  }
