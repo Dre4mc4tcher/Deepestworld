@@ -1,13 +1,25 @@
-// BFS-Algorithm for 2D Cartesian System
 function bfs2D(startX, startY, targetX, targetY) {
 	// Check if the coordinate given is walkable
 	function isValidCoordinate(x, y) { 
-		const test = dw.getTerrainAt({l:dw.c.l,x: x,y: y})
-		if( test == 0){ // 1 should be a wall
-			return true
+		if (isChunkLoaded(x, y) !== undefined) {
+		  console.log(`Chunk loaded at (${x}, ${y})`);
+	  
+		  const terrain = dw.getTerrainAt({ l: dw.c.l, x: x, y: y });
+		  console.log(`Terrain at (${x}, ${y}): ${terrain}`);
+	  
+		  if (terrain === 0) {
+			console.log(`Coordinate (${x}, ${y}) is walkable`);
+			return true;
+		  }
+		} else {
+		  console.log(`Chunk not loaded at (${x}, ${y})`);
 		}
-	}
-		
+	  
+		return false;
+	  }
+	function isChunkLoaded(x, y) {
+		return dw.chunks[dw.c.l+'.'+Math.floor(y / 16)+'.'+Math.floor(x / 16)];
+	}	
 	// Define a queue to store the coordinates to be visited
 	const queue = [];
 	queue.push({ x: startX, y: startY });
@@ -26,10 +38,10 @@ function bfs2D(startX, startY, targetX, targetY) {
 	  { dx: 1, dy: 0 },  // Right
 	  { dx: 0, dy: -1 }, // Up
 	  { dx: 0, dy: 1 },   // Down
-	  { dx: -1, dy: -1 }, // Up Left
-	  { dx: -1, dy: 1 }, // Down Left
-	  { dx: 1, dy: -1 }, // Up Right
-	  { dx: 1, dy: 1 }, // Down Right
+	  //{ dx: -1, dy: -1 }, // Up Left
+	  //{ dx: -1, dy: 1 }, // Down Left
+	  //{ dx: 1, dy: -1 }, // Up Right
+	   //{ dx: 1, dy: 1 } // Down Right
 	];
   
 	while (queue.length > 0) {
@@ -67,4 +79,4 @@ function bfs2D(startX, startY, targetX, targetY) {
   
 	// No path found
 	return [];
-  }
+}
